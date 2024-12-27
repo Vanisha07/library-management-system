@@ -92,3 +92,49 @@ class Library:
         books = cursor.fetchall()
         conn.close()
         return books
+
+def menu():
+    setup_database()
+    while True:
+        print("\nLibrary Management System")
+        print("1. Add Book")
+        print("2. Borrow Book")
+        print("3. Return Book")
+        print("4. View Available Books")
+        print("5. Exit")
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            isbn = input("Enter ISBN: ")
+            title = input("Enter Title: ")
+            author = input("Enter Author: ")
+            year = input("Enter Year: ")
+            Library.add_book(isbn, title, author, year)
+        elif choice == "2":
+            isbn = input("Enter ISBN to borrow: ")
+            try:
+                Library.borrow_book(isbn)
+                print("Book borrowed successfully.")
+            except ValueError as e:
+                print(f"Error: {e}")
+        elif choice == "3":
+            isbn = input("Enter ISBN to return: ")
+            try:
+                Library.return_book(isbn)
+                print("Book returned successfully.")
+            except ValueError as e:
+                print(f"Error: {e}")
+        elif choice == "4":
+            books = Library.view_available_books()
+            print("Available Books:")
+            for book in books:
+                print(f"ISBN: {book[0]}, Title: {book[1]}, Author: {book[2]}, Year: {book[3]}")
+        elif choice == "5":
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+
+if __name__ == "__main__":
+    menu()
+
