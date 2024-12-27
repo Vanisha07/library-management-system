@@ -15,7 +15,37 @@ def setup_database():
 
 class Library:
     @staticmethod
+    def validate_book_details(isbn, title, author, year):
+        """
+        Validating the book details based on the constraints and collecting all errors.
+        """
+        errors = []
+
+        if not isbn.isdigit():
+            errors.append("ISBN must be a numeric value.")
+        if not isinstance(title, str) or title.strip() == "":
+            errors.append("Title must be a non-empty string.")
+        if not isinstance(author, str) or any(char.isdigit() for char in author):
+            errors.append("Author must be a string and should not contain digits.")
+        if not str(year).isdigit() or not (1000 <= int(year) <= 9999):
+            errors.append("Year must be a valid four-digit number.")
+
+        return errors
+
+    @staticmethod
     def add_book(isbn, title, author, year):
+        """
+        Adds a new book to the library database after validating constraints.
+        If validation errors occur, they are printed.
+        """
+        # Validate the book details
+        errors = Library.validate_book_details(isbn, title, author, year)
+        if errors:
+            print("Error(s) while adding the book:")
+            for error in errors:
+                print(f"- {error}")
+            print("Book not added!!")
+            return
 
         # Insert the book into the database
         conn = sqlite3.connect('library.db')
@@ -26,6 +56,7 @@ class Library:
         conn.close()
         print("Book added successfully.")
 
+    
     @staticmethod
     def view_available_books():
         conn = sqlite3.connect('library.db')
