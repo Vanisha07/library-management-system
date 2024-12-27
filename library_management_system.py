@@ -56,6 +56,33 @@ class Library:
         conn.close()
         print("Book added successfully.")
 
+    @staticmethod
+    def borrow_book(isbn):
+        conn = sqlite3.connect('library.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT available FROM books WHERE isbn = ?', (isbn,))
+        book = cursor.fetchone()
+        if book and book[0] == 1:
+            cursor.execute('UPDATE books SET available = 0 WHERE isbn = ?', (isbn,))
+            conn.commit()
+        else:
+            conn.close()
+            raise ValueError("Book is not available or does not exist.")
+        conn.close()
+
+    @staticmethod
+    def return_book(isbn):
+        conn = sqlite3.connect('library.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT available FROM books WHERE isbn = ?', (isbn,))
+        book = cursor.fetchone()
+        if book and book[0] == 0:
+            cursor.execute('UPDATE books SET available = 1 WHERE isbn = ?', (isbn,))
+            conn.commit()
+        else:
+            conn.close()
+            raise ValueError("Book was not borrowed or does not exist.")
+        conn.close()
     
     @staticmethod
     def view_available_books():
